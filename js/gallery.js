@@ -89,59 +89,10 @@ const images = [
   const galleryItems = images.map(createGalleryItem);
   galleryContainer.append(...galleryItems);
   
-  // Заборона стандартної поведінки для посилань
-  galleryContainer.addEventListener('click', e => {
-    e.preventDefault();
-  });
-
 
 galleryContainer.addEventListener('click', onGalleryClick);
 
-function onGalleryClick(event) {
-  event.preventDefault();
-
-  const isGalleryImage = event.target.classList.contains('gallery-image');
-
-  if (isGalleryImage) {
-    const largeImageUrl = event.target.dataset.source;
-    console.log('Посилання на велике зображення:', largeImageUrl);
-    // Тут буде відкриватися модальне вікно з великим зображенням
-  }
-}
-
-function onGalleryClick(event) {
-    event.preventDefault();
-  
-    const isGalleryImage = event.target.classList.contains('gallery-image');
-  
-    if (isGalleryImage) {
-      const largeImageUrl = event.target.dataset.source;
-  
-      const instance = basicLightbox.create(`
-        <img src="${largeImageUrl}" alt="Large Image">
-      `);
-  
-      instance.show();
-    }
-  }
-
-  function onGalleryClick(event) {
-    event.preventDefault();
-  
-    const isGalleryImage = event.target.classList.contains('gallery-image');
-  
-    if (isGalleryImage) {
-      const largeImageUrl = event.target.dataset.source;
-  
-      const instance = basicLightbox.create(`
-        <img src="${largeImageUrl}" alt="Large Image">
-      `);
-  
-      instance.show();
-    }
-  }
-
-  let instance = null;
+let instance = null;
 
 function onGalleryClick(event) {
   event.preventDefault();
@@ -152,12 +103,18 @@ function onGalleryClick(event) {
     const largeImageUrl = event.target.dataset.source;
 
     instance = basicLightbox.create(`
-      <img src="${largeImageUrl}" alt="Large Image">
-    `);
+    <img src="${largeImageUrl}" alt="Large Image">
+  `, {
+    onShow: () => {
+      document.addEventListener('keydown', onEscapePress);
+    },
+    onClose: () => {
+      document.removeEventListener('keydown', onEscapePress);
+    }
+  });
 
-    instance.show();
-    document.addEventListener('keydown', onEscapePress);
-  }
+  instance.show();
+}
 }
 
 function onEscapePress(event) {
